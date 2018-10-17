@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.accp.dao.lc.postDao">
+<!-- 查询热门帖子 -->
+	<select id="queryRE" resultType="com.accp.vo.lc.postVO">
+SELECT `forummanagement`.`fmName`, `user`.username,`user`.userimgpath ,`user`.`userID`,`post`.* FROM `user`,`post`,`forummanagement` WHERE 
+ `post`.recommend=2
+ AND post.operatingstate !=2
+ AND post.`fmID`=`forummanagement`.`fmID`
+ and post.title like '%${title}%'
+ 
+	</select>
+	<!-- 查询我的帖子 -->
+	<select id="QueryWO" resultType="com.accp.vo.lc.postVO">
+ SELECT  `forummanagement`.`fmName`,`user`.username,`user`.userimgpath ,`user`.`userID`,`post`.* FROM `user`,`post`,`forummanagement` WHERE 
+ `post`.recommend=2
+ AND post.operatingstate !=2
+ AND post.`userID`=user.`userID`
+ AND user.`userNickName`=#{name}
+  AND post.`fmID`=`forummanagement`.`fmID`
+ AND post.title LIKE '%${title}%'
+
+	</select>
+	
+ 
+ <!-- 查询我的收藏 -->
+ <select id="QueryShou" resultType="com.accp.vo.lc.postVO">
+ SELECT  `forummanagement`.`fmName`,`user`.username,`user`.userimgpath ,`user`.`userID`,`post`.* FROM `user`,`post`,`forummanagement`,`postcollection` WHERE 
+ `post`.recommend=2
+ AND post.operatingstate !=2
+
+ AND user.`userNickName`=#{name}
+  AND post.`fmID`=`forummanagement`.`fmID`
+  AND`postcollection`.`pcID`=post.`postID`
+
+ AND post.title LIKE '%${title}%'
+
+	</select>
+	
+	<!-- 查询我的留言帖子-->
+	 <select id="QueryLiu" resultType="com.accp.vo.lc.postVO">
+  SELECT  `forummanagement`.`fmName`,`user`.username,`user`.userimgpath ,`user`.`userID`,`post`.* FROM `user`,`post`,`forummanagement`, `postcomment`WHERE 
+ `post`.recommend=2
+ AND post.operatingstate !=2
+
+ AND user.`userNickName`=#{name}
+  AND post.`fmID`=`forummanagement`.`fmID`
+AND postcomment.`pcID`=post.`postID`
+AND user.`userID`=`postcomment`.`userID`
+
+ AND post.title LIKE '%${title}%'
+
+	</select>
+	
+ 
+ <!-- 查询帖子 -->
+	 <select id="QueryTie" resultType="com.accp.vo.lc.postVO">
+
+SELECT  `forummanagement`.`fmName`,`user`.username,`user`.userimgpath ,`user`.`userID`,`post`.*  FROM `user`,`post`,`forummanagement`
+ WHERE `post`.recommend=2
+ AND post.operatingstate !=2
+ AND post.`fmID`=`forummanagement`.`fmID`
+ AND post.postid=#{postid}
+	</select>
+	
+	<select id="QueryTie1" resultType="com.accp.vo.lc.postVO">
+	SELECT `user`.username,`user`.userimgpath ,`user`.`userID`,`postcomment`.* FROM `postcomment`,`user`
+  WHERE  `postcomment`.postid=#{postid}
+   AND user.userid=`postcomment`.userid
+	</select>
+	<update id="updateBrowseNumber">
+
+UPDATE
+  `yphting`.`post`
+SET
+  `browseNumber` = #{id}
+WHERE `postID` = #{postid}
+
+</update>
+	
+
+	<select id="query" resultType="com.accp.pojo.Services" >
+  SELECT * FROM `services` WHERE userid=#{id}
+ 	</select> 
+ 	
+<!--  	<update id=""> -->
+
+<!-- UPDATE -->
+<!--   `yphting`.`post` -->
+<!-- SET -->
+<!--   `fabulousNumber` = #{id} -->
+<!-- WHERE `postID` = #{postid} -->
+
+<!-- </update> -->
+
+<!-- <select id="query1" resultType="com.accp.pojo.Appraisalapply"> -->
+
+<!--  SELECT * FROM`appraisalapply` WHERE userid=#{id} -->
+<!-- </select> -->
+<!-- 查询收藏 -->
+ <select id="querySHoucang" resultType="com.accp.vo.lc.postVO">
+ SELECT * FROM `postcollection` WHERE userid=#{userid} AND pcid=#{postid}
+	</select>
+	<!-- 删除收藏 -->
+<delete id="deleteShoucang">
+DelETE FROM `postcollection` WHERE userid=#{userid} AND pcid=#{postid}
+</delete>
+
+<!-- 修改收藏 -->
+<update id="updateShoucang">
+
+UPDATE
+  `yphting`.`post`
+SET
+  `collectionNumber` = #{id}
+WHERE `postID` = #{postid}
+</update>
+
+<!-- 添加收藏 -->
+<insert id="addShoucang">
+INSERT INTO `yphting`.`postcollection` (
+  `pcID`,
+  `userID`,
+  `collectionTime`
+)
+VALUES
+  (
+    #{postid},
+    #{userid},
+   	NOW()
+  );
+</insert>
+
+
+
+</mapper>
